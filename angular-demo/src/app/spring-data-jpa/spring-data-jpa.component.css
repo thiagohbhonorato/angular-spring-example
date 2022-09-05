@@ -1,0 +1,21 @@
+.active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.container {
+  display: flex;
+}
+.menu {
+  min-width: 200px;
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  padding-top: 10px;
+}
+.content {
+  flex: 1 1 auto;
+  padding: 10px 15px;
+}
+.link {
+  text-align: left;
+  border-radius: 0;
+}

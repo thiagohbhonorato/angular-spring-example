@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="app-toolbar mat-elevation-z8">
+  <span [routerLink]="['/']" class="app-home" title="Home">Angular Demo</span>
+</mat-toolbar>
+<div class="app-viewer">
+  <header class="app-header">
+    <nav>
+      <a
+        mat-button
+        [routerLink]="['/spring-data-jpa']"
+        [routerLinkActive]="['active', 'mat-primary']"
+      >
+        Spring Data JPA
+      </a>
+      <a
+        mat-button
+        [routerLink]="['/spring-batch']"
+        [routerLinkActive]="['active', 'mat-primary']"
+        >Spring Batch
+      </a>
+    </nav>
+  </header>
+  <router-outlet></router-outlet>
+</div>

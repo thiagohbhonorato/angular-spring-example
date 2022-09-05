@@ -1,0 +1,4 @@
+queries:
+  people: >
+    SELECT ID, NAME, BIRTH_DATE, DOCUMENT, MALE_OR_FEMALE
+      FROM people

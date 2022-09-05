@@ -1,0 +1,44 @@
+.table {
+  width: 100%;
+}
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+tr.student-detail-row,
+tr.enrollment-detail-row {
+  height: 0;
+}
+tr.student-row:not(.student-expanded-row):hover,
+tr.enrollment-row:not(.student-expanded-row):hover {
+  background: whitesmoke;
+}
+tr.student-row:not(.student-expanded-row):active,
+tr.enrollment-row:not(.student-expanded-row):active {
+  background: #efefef;
+}
+.student-row td,
+.enrollment-row td {
+  border-bottom-width: 0;
+}
+.student-detail,
+.enrollment-detail {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.icon-detail {
+  margin-right: 5px;
+}
+.student-description,
+.enrollment-description {
+  padding: 0 16px 32px;
+  flex: 1 1 auto;
+}

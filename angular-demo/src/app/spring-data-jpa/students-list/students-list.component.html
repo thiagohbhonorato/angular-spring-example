@@ -1,0 +1,276 @@
+<div class="header">
+  <h2 class="title">{{title}}</h2>
+  <button
+    mat-mini-fab
+    class="button-code"
+    title="View JSON"
+    (click)="openJSON()"
+  >
+    &#123;&nbsp;&nbsp;&#125;
+  </button>
+</div>
+<div *ngIf="dataSource$ | async as dataSource; else loading">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    multiTemplateDataRows
+    class="table"
+  >
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let student">{{student.id}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="personFirstName">
+      <th mat-header-cell *matHeaderCellDef>First name</th>
+      <td mat-cell *matCellDef="let student">{{student.person.firstName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="personLastName">
+      <th mat-header-cell *matHeaderCellDef>Last name</th>
+      <td mat-cell *matCellDef="let student">{{student.person.lastName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+      <td mat-cell *matCellDef="let student">
+        <button
+          mat-icon-button
+          aria-label="expand row"
+          (click)="
+            expandedStudent = expandedStudent === student ? null : student;
+            $event.stopPropagation()
+          "
+        >
+          <mat-icon *ngIf="expandedStudent !== student"
+            >keyboard_arrow_down</mat-icon
+          >
+          <mat-icon *ngIf="expandedStudent === student"
+            >keyboard_arrow_up</mat-icon
+          >
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedStudentDetail">
+      <td
+        mat-cell
+        *matCellDef="let student"
+        [attr.colspan]="displayedStudentColumnsWithExpand.length"
+      >
+        <div
+          class="student-detail"
+          [@detailExpand]="
+            student == expandedStudent ? 'expanded' : 'collapsed'
+          "
+        >
+          <div class="student-description">
+            <h3>Enrollments</h3>
+            <table
+              mat-table
+              [dataSource]="student.studentEnrollments"
+              multiTemplateDataRows
+              class="table"
+            >
+              <ng-container matColumnDef="enrollmentNumber">
+                <th mat-header-cell *matHeaderCellDef>Enrollment Number</th>
+                <td mat-cell *matCellDef="let enrollment">
+                  {{enrollment.enrollmentNumber}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="courseName">
+                <th mat-header-cell *matHeaderCellDef>Course Name</th>
+                <td mat-cell *matCellDef="let enrollment">
+                  {{enrollment.courseName}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="enrollmentDate">
+                <th mat-header-cell *matHeaderCellDef>Enrollment Date</th>
+                <td mat-cell *matCellDef="let enrollment">
+                  {{enrollment.enrollmentDate | date}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let enrollment">
+                  {{enrollment.status | uppercase}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expand">
+                <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+                  &nbsp;
+                </th>
+                <td mat-cell *matCellDef="let enrollment">
+                  <button
+                    mat-icon-button
+                    aria-label="expand row"
+                    (click)="
+                      expandedEnrollment =
+                        expandedEnrollment === enrollment ? null : enrollment;
+                      $event.stopPropagation()
+                    "
+                  >
+                    <mat-icon *ngIf="expandedEnrollment !== enrollment"
+                      >keyboard_arrow_down</mat-icon
+                    >
+                    <mat-icon *ngIf="expandedEnrollment === enrollment"
+                      >keyboard_arrow_up</mat-icon
+                    >
+                  </button>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expandedEnrollmentDetail">
+                <td
+                  mat-cell
+                  *matCellDef="let enrollment"
+                  [attr.colspan]="displayedEnrollmentColumnsWithExpand.length"
+                >
+                  <div
+                    class="enrollment-detail"
+                    [@detailExpand]="
+                      enrollment == expandedEnrollment
+                        ? 'expanded'
+                        : 'collapsed'
+                    "
+                  >
+                    <div class="enrollment-description">
+                      <h3>Curriculum Grade</h3>
+                      <table
+                        mat-table
+                        [dataSource]="
+                          enrollment.curriculumGrade.curriculumGradeItems
+                            | curriculumGradeItemsOrder
+                        "
+                        class="table"
+                      >
+                        <ng-container matColumnDef="stage">
+                          <th mat-header-cell *matHeaderCellDef>Stage</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{element.stage}}
+                          </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="subject">
+                          <th mat-header-cell *matHeaderCellDef>Subject</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{element.subject.name}}
+                          </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="workload">
+                          <th mat-header-cell *matHeaderCellDef>Workload</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{element.workload}}
+                          </td>
+                        </ng-container>
+
+                        <tr
+                          mat-header-row
+                          *matHeaderRowDef="displayedCurriculumGradeItemColumns"
+                        ></tr>
+                        <tr
+                          mat-row
+                          *matRowDef="
+                            let row;
+                            columns: displayedCurriculumGradeItemColumns
+                          "
+                        ></tr>
+
+                        <tr class="mat-row" *matNoDataRow>
+                          <td
+                            class="mat-cell"
+                            [attr.colspan]="
+                              displayedCurriculumGradeItemColumns.length
+                            "
+                          >
+                            No data
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="displayedEnrollmentColumnsWithExpand"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="
+                  let elementEnrollment;
+                  columns: displayedEnrollmentColumnsWithExpand
+                "
+                class="enrollment-row"
+                [class.enrollment-expanded-row]="
+                  expandedEnrollment === elementEnrollment
+                "
+                (click)="
+                  expandedEnrollment =
+                    expandedEnrollment === elementEnrollment
+                      ? null
+                      : elementEnrollment
+                "
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="
+                  let rowEnrollment;
+                  columns: ['expandedEnrollmentDetail']
+                "
+                class="enrollment-detail-row"
+              ></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td
+                  class="mat-cell"
+                  [attr.colspan]="displayedEnrollmentColumns.length"
+                >
+                  No data
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedStudentColumnsWithExpand"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="
+        let elementStudent;
+        columns: displayedStudentColumnsWithExpand
+      "
+      class="student-row"
+      [class.student-expanded-row]="expandedStudent === elementStudent"
+      (click)="
+        expandedStudent =
+          expandedStudent === elementStudent ? null : elementStudent
+      "
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let rowStudent; columns: ['expandedStudentDetail']"
+      class="student-detail-row"
+    ></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedStudentColumns.length">
+        No data
+      </td>
+    </tr>
+  </table>
+</div>
+<ng-template #loading>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

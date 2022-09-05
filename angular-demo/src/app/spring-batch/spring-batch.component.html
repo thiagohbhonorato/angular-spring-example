@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="content">
+    <div class="title">Jobs</div>
+    <div class="jobs">
+      <div class="job" *ngFor="let job of jobs">
+        <mat-card>
+          <mat-card-title>{{job.name}}</mat-card-title>
+          <mat-card-subtitle>{{job.status}}</mat-card-subtitle>
+          <mat-card-content>
+            <p>{{job.description}}</p>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="runJob(job)"
+              [class.mat-button-disabled]="job.running"
+              [attr.disabled]="job.running ? 'disabled' : null"
+            >
+              Start
+            </button>
+          </mat-card-content>
+          <mat-card-footer class="card-footer">
+            <mat-progress-bar
+              mode="indeterminate"
+              *ngIf="job.running"
+            ></mat-progress-bar>
+          </mat-card-footer>
+        </mat-card>
+      </div>
+    </div>
+    <div class="files">
+      <table mat-table [dataSource]="files" class="table mat-elevation-z3">
+        <caption></caption>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>File Name</th>
+          <td mat-cell *matCellDef="let element">{{element.name}}</td>
+        </ng-container>
+        <ng-container matColumnDef="creation_date">
+          <th mat-header-cell *matHeaderCellDef>Creation Date</th>
+          <td mat-cell *matCellDef="let element">
+            {{element.creation_date | date:'medium'}}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="filesColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: filesColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="filesColumns.length">No data</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="log">
+    <div class="title">Execution log</div>
+    <mat-card *ngFor="let log of logs" class="job-log">
+      <div><strong>Job</strong> {{log.job.name}}</div>
+      <div><strong>Status</strong> {{log.res.status}}</div>
+      <div *ngIf="log.res.start_time">
+        <strong>Start</strong> {{log.res.start_time | date: 'medium'}}
+      </div>
+      <div *ngIf="log.res.end_time">
+        <strong>End</strong> {{log.res.end_time | date: 'medium'}}
+      </div>
+      <div *ngIf="log.err.message">
+        <strong>Error message</strong> {{log.err.message}}
+      </div>
+    </mat-card>
+    <p *ngIf="logs.length === 0">No Data</p>
+  </div>
+</div>

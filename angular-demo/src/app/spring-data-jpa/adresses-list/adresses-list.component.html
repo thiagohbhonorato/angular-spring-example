@@ -1,0 +1,131 @@
+<div class="header">
+  <h2 class="title">{{title}}</h2>
+  <button
+    mat-mini-fab
+    class="button-code"
+    title="View JSON"
+    (click)="openJSON()"
+  >
+    &#123;&nbsp;&nbsp;&#125;
+  </button>
+</div>
+<div *ngIf="dataSource$ | async as dataSource; else loading">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    multiTemplateDataRows
+    class="table"
+  >
+    <ng-container matColumnDef="postalCode">
+      <th mat-header-cell *matHeaderCellDef>Postal Code</th>
+      <td mat-cell *matCellDef="let element">{{element.postalCode}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="streetName">
+      <th mat-header-cell *matHeaderCellDef>Street Name</th>
+      <td mat-cell *matCellDef="let element">{{element.streetName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="buildingNumber">
+      <th mat-header-cell *matHeaderCellDef>Building Number</th>
+      <td mat-cell *matCellDef="let element">{{element.buildingNumber}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="complement">
+      <th mat-header-cell *matHeaderCellDef>Complement</th>
+      <td mat-cell *matCellDef="let element">{{element.complement}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="neighborhood">
+      <th mat-header-cell *matHeaderCellDef>Neighborhood</th>
+      <td mat-cell *matCellDef="let element">{{element.neighborhood}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef>City</th>
+      <td mat-cell *matCellDef="let element">{{element.city}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="stateOrRegion">
+      <th mat-header-cell *matHeaderCellDef>State or Region</th>
+      <td mat-cell *matCellDef="let element">{{element.stateOrRegion}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="country">
+      <th mat-header-cell *matHeaderCellDef>Country</th>
+      <td mat-cell *matCellDef="let element">{{element.country}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          aria-label="expand row"
+          (click)="
+            expandedElement = expandedElement === element ? null : element;
+            $event.stopPropagation()
+          "
+        >
+          <mat-icon *ngIf="expandedElement !== element"
+            >keyboard_arrow_down</mat-icon
+          >
+          <mat-icon *ngIf="expandedElement === element"
+            >keyboard_arrow_up</mat-icon
+          >
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [attr.colspan]="displayedColumnsWithExpand.length"
+      >
+        <div
+          class="address-detail"
+          [@detailExpand]="
+            element == expandedElement ? 'expanded' : 'collapsed'
+          "
+        >
+          <mat-icon
+            class="icon-detail"
+            aria-hidden="false"
+            fontIcon="subdirectory_arrow_right"
+          ></mat-icon>
+          <div class="address-description">
+            {{element | address}}
+            <div *ngIf="element.complement" class="address-complement">
+              Complemento:{{element.complement}}
+            </div>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsWithExpand"></tr>
+    <tr
+      mat-row
+      *matRowDef="let element; columns: displayedColumnsWithExpand"
+      class="address-row"
+      [class.address-expanded-row]="expandedElement === element"
+      (click)="expandedElement = expandedElement === element ? null : element"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="address-detail-row"
+    ></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumnsWithExpand.length">
+        No data
+      </td>
+    </tr>
+  </table>
+</div>
+<ng-template #loading>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
