@@ -1,68 +1,175 @@
 <div class="container">
-  <div class="content">
-    <div class="title">Jobs</div>
-    <div class="jobs">
-      <div class="job" *ngFor="let job of jobs">
-        <mat-card>
-          <mat-card-title>{{job.name}}</mat-card-title>
-          <mat-card-subtitle>{{job.status}}</mat-card-subtitle>
-          <mat-card-content>
-            <p>{{job.description}}</p>
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="runJob(job)"
-              [class.mat-button-disabled]="job.running"
-              [attr.disabled]="job.running ? 'disabled' : null"
-            >
-              Start
-            </button>
-          </mat-card-content>
-          <mat-card-footer class="card-footer">
-            <mat-progress-bar
-              mode="indeterminate"
-              *ngIf="job.running"
-            ></mat-progress-bar>
-          </mat-card-footer>
-        </mat-card>
+  <div class="row">
+    <div class="col-9">
+      <div class="row">
+        <div class="col-8">
+          <div class="row">
+            <div class="col-12">
+              <div class="title">Jobs</div>
+            </div>
+            <div class="col text-center" *ngFor="let job of jobs">
+              <mat-card>
+                <mat-card-title>{{job.name}}</mat-card-title>
+                <mat-card-subtitle>{{job.status}}</mat-card-subtitle>
+                <mat-card-content>
+                  <p>{{job.description}}</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="runJob(job)"
+                    [class.mat-button-disabled]="job.running"
+                    [attr.disabled]="job.running ? 'disabled' : null"
+                  >
+                    Start
+                  </button>
+                </mat-card-content>
+                <mat-card-footer class="card-footer">
+                  <mat-progress-bar
+                    mode="indeterminate"
+                    *ngIf="job.running"
+                  ></mat-progress-bar>
+                </mat-card-footer>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="title">Services</div>
+          <div class="row">
+            <div class="col-6">
+              <button
+                mat-raised-button
+                class="btn-service"
+                color="primary"
+                (click)="cleanDatabase()"
+              >
+                Clean database
+              </button>
+            </div>
+            <div class="col-6">
+              <button
+                mat-raised-button
+                class="btn-service"
+                color="primary"
+                (click)="cleanFiles()"
+              >
+                Clean files
+              </button>
+            </div>
+            <div class="col-6">
+              <button
+                mat-raised-button
+                class="btn-service"
+                color="primary"
+                (click)="cleanLog()"
+              >
+                Clean log
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          <div class="title">Files</div>
+          <table mat-table [dataSource]="files" class="table mat-elevation-z3">
+            <caption></caption>
+            <ng-container matColumnDef="selection">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <mat-radio-group [(ngModel)]="fileSelected">
+                  <mat-radio-button [value]="element"></mat-radio-button>
+                </mat-radio-group>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>File Name</th>
+              <td mat-cell *matCellDef="let element">{{element.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="creation_date">
+              <th mat-header-cell *matHeaderCellDef>Creation Date</th>
+              <td mat-cell *matCellDef="let element">
+                {{element.creation_date | date:'medium'}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="download">
+              <th mat-header-cell *matHeaderCellDef>Download</th>
+              <td mat-cell *matCellDef="let element" class="text-center">
+                <a
+                  href="javascript:void('download')"
+                  (click)="fileDownload(element)"
+                >
+                  <mat-icon
+                    aria-hidden="false"
+                    aria-label="Download"
+                    fontIcon="file_download"
+                  ></mat-icon>
+                </a>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="filesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: filesColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="filesColumns.length">
+                No data
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-7">
+          <div class="title">Database</div>
+          <table mat-table [dataSource]="people" class="table mat-elevation-z3">
+            <caption></caption>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let element">{{element.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="birthDate">
+              <th mat-header-cell *matHeaderCellDef>Birth Date</th>
+              <td mat-cell *matCellDef="let element">
+                {{element.birthDate | date:'medium'}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="document">
+              <th mat-header-cell *matHeaderCellDef>Document</th>
+              <td mat-cell *matCellDef="let element">{{element.document}}</td>
+            </ng-container>
+            <ng-container matColumnDef="processingKey">
+              <th mat-header-cell *matHeaderCellDef>Key</th>
+              <td mat-cell *matCellDef="let element">
+                {{element.processingKey}}
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="peopleColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: peopleColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="peopleColumns.length">
+                No data
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
-    <div class="files">
-      <table mat-table [dataSource]="files" class="table mat-elevation-z3">
-        <caption></caption>
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>File Name</th>
-          <td mat-cell *matCellDef="let element">{{element.name}}</td>
-        </ng-container>
-        <ng-container matColumnDef="creation_date">
-          <th mat-header-cell *matHeaderCellDef>Creation Date</th>
-          <td mat-cell *matCellDef="let element">
-            {{element.creation_date | date:'medium'}}
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="filesColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: filesColumns"></tr>
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="filesColumns.length">No data</td>
-        </tr>
-      </table>
+    <div class="col-3">
+      <div class="title">Execution log</div>
+      <mat-card *ngFor="let log of logs" class="job-log">
+        <div *ngIf="log.job.name"><strong>Job</strong> {{log.job.name}}</div>
+        <div *ngIf="log.srv.name">
+          <strong>Service</strong> {{log.srv.name}}
+        </div>
+        <div><strong>Status</strong> {{log.res.status}}</div>
+        <div *ngIf="log.res.start_time">
+          <strong>Start</strong> {{log.res.start_time | date: 'medium'}}
+        </div>
+        <div *ngIf="log.res.end_time">
+          <strong>End</strong> {{log.res.end_time | date: 'medium'}}
+        </div>
+        <div *ngIf="log.err.message">
+          <strong>Error message</strong> {{log.err.message}}
+        </div>
+      </mat-card>
+      <p *ngIf="logs.length === 0">No Data</p>
     </div>
-  </div>
-  <div class="log">
-    <div class="title">Execution log</div>
-    <mat-card *ngFor="let log of logs" class="job-log">
-      <div><strong>Job</strong> {{log.job.name}}</div>
-      <div><strong>Status</strong> {{log.res.status}}</div>
-      <div *ngIf="log.res.start_time">
-        <strong>Start</strong> {{log.res.start_time | date: 'medium'}}
-      </div>
-      <div *ngIf="log.res.end_time">
-        <strong>End</strong> {{log.res.end_time | date: 'medium'}}
-      </div>
-      <div *ngIf="log.err.message">
-        <strong>Error message</strong> {{log.err.message}}
-      </div>
-    </mat-card>
-    <p *ngIf="logs.length === 0">No Data</p>
   </div>
 </div>

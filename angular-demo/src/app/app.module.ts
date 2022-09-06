@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,6 +19,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { SpringDataJpaComponent } from './spring-data-jpa/spring-data-jpa.component';
 import { SpringBatchComponent } from './spring-batch/spring-batch.component';
@@ -45,6 +48,7 @@ import { StudentsListComponent } from './spring-data-jpa/students-list/students-
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
     BrowserAnimationsModule,
     SharedModule,
     MatToolbarModule,
@@ -59,6 +63,8 @@ import { StudentsListComponent } from './spring-data-jpa/students-list/students-
     MatButtonToggleModule,
     MatIconModule,
     MatProgressBarModule,
+    MatRadioModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

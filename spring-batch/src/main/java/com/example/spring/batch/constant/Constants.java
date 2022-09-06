@@ -22,4 +22,10 @@ public class Constants {
 
     public static final String PACKAGES_TO_SCAN = "com.example.spring.batch";
 
+    public static final String URI_SERVICES = "api/batch/v1/srv";
+    public static final String URI_JOBS = "api/batch/v1/job";
+
+    public static final String URI_FILE = "/file";
+    public static final String URI_FILE_DOWNLOAD = URI_FILE + "/{fileName:.+}";
+
 }

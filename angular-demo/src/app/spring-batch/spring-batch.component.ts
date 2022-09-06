@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   catchError,
   observable,
@@ -14,14 +15,20 @@ import { SpringBatchService } from './spring-batch.service';
 interface Job {
   id: string;
   name: string;
-  status: 'No executed' | 'Running' | 'Completed' | 'Failed';
+  status: 'No executed' | 'Running' | 'Completed' | 'Success' | 'Failed';
   description: string;
   service: string;
   running: boolean;
 }
 
+interface Service {
+  id: string;
+  name: string;
+  status: string;
+}
+
 interface Response {
-  status: 'No executed' | 'Running' | 'Completed' | 'Failed';
+  status: 'No executed' | 'Running' | 'Completed' | 'Success' | 'Failed';
   start_time: string;
   end_time: string;
   elapsed_time: string;
@@ -29,6 +36,7 @@ interface Response {
 
 interface Log {
   job: Job;
+  srv: Service;
   res: Response;
   err: HttpErrorResponse;
 }
@@ -36,6 +44,15 @@ interface Log {
 interface File {
   name: string;
   creation_date: string;
+}
+
+interface People {
+  id: number;
+  name: string;
+  birthDate: Date;
+  document: string;
+  maleOrFemale: string;
+  processingKey: string;
 }
 
 @Component({
@@ -47,10 +64,17 @@ export class SpringBatchComponent {
   jobs: Job[];
   logs: Log[];
 
+  fileSelected: File | null;
   files: File[];
-  filesColumns = ['name', 'creation_date'];
+  filesColumns = ['selection', 'name', 'creation_date', 'download'];
 
-  constructor(private service: SpringBatchService) {
+  people: People[];
+  peopleColumns = ['name', 'birthDate', 'document'];
+
+  constructor(
+    private service: SpringBatchService,
+    private snackBar: MatSnackBar
+  ) {
     this.logs = [];
     this.jobs = [
       <Job>{
@@ -65,20 +89,38 @@ export class SpringBatchComponent {
         name: 'File To Database',
         status: 'No executed',
         description: 'File loading for databse insertion.',
-        service: '/job/file-to-database',
+        service: '/job/file-to-database/{fileName}',
       },
     ];
 
+    this.fileSelected = null;
     this.files = [];
     this.loadTableFiles();
+
+    this.people = [];
+    this.loadTablePeople();
   }
 
   runJob(job: Job): void {
+    let uri = job.service;
+    if (job.id === 'fileToDatabase') {
+      if (this.fileSelected === null) {
+        if (this.files.length > 0) {
+          this.snackBar.open('Select a file', 'OK');
+        } else {
+          this.snackBar.open('There is no file to select', 'OK');
+        }
+        return;
+      }
+
+      uri = uri.replace('{fileName}', this.fileSelected.name);
+    }
+
     job.status = 'Running';
     job.running = true;
 
     this.service
-      .post<Response>(job.service)
+      .post<Response>(uri)
       .pipe(
         catchError((error) => {
           this.onJobError(job, error);
@@ -98,12 +140,37 @@ export class SpringBatchComponent {
       });
   }
 
+  _log(log: Log): void {
+    this.logs.unshift(log);
+  }
+
   onJobSuccessfully(job: Job, res: Response): void {
     job.status = res.status;
     job.running = false;
-    this.logs.unshift({ job, res, err: <HttpErrorResponse>{} });
+    this._log({
+      job,
+      res,
+      srv: <Service>{},
+      err: <HttpErrorResponse>{},
+    });
     if (job.id === 'databaseToFile') {
       this.loadTableFiles();
+    } else if (job.id === 'fileToDatabase') {
+      this.loadTablePeople();
+    }
+  }
+
+  onServiceSuccessfully(srv: Service): void {
+    this._log({
+      job: <Job>{},
+      res: <Response>{ status: 'Success' },
+      srv,
+      err: <HttpErrorResponse>{},
+    });
+    if (srv.id === 'cleanFiles') {
+      this.loadTableFiles();
+    } else if (srv.id === 'cleanDatabase') {
+      this.loadTablePeople();
     }
   }
 
@@ -111,7 +178,23 @@ export class SpringBatchComponent {
     console.error(err);
     job.status = 'Failed';
     job.running = false;
-    this.logs.unshift({ job, res: <Response>{ status: job.status }, err });
+    this._log({
+      job,
+      res: <Response>{ status: job.status },
+      srv: <Service>{},
+      err,
+    });
+  }
+
+  onServiceError(srv: Service, err: HttpErrorResponse): void {
+    console.error(err);
+    srv.status = 'Error';
+    this._log({
+      job: <Job>{},
+      res: <Response>{ status: srv.status },
+      srv,
+      err,
+    });
   }
 
   loadTableFiles() {
@@ -126,5 +209,69 @@ export class SpringBatchComponent {
       .subscribe({
         next: (data) => (this.files = data),
       });
+  }
+
+  loadTablePeople() {
+    this.service
+      .get<People[]>('/srv/people')
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: (data) => (this.people = data),
+      });
+  }
+
+  cleanDatabase() {
+    const srv = <Service>{
+      id: 'cleanDatabase',
+      name: 'Clean database',
+    };
+
+    this.service
+      .delete('/srv/people')
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.onServiceSuccessfully(srv);
+        },
+      });
+  }
+
+  cleanFiles() {
+    const srv = <Service>{
+      id: 'cleanFiles',
+      name: 'Clean files',
+    };
+
+    this.service
+      .delete('/srv/file')
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.onServiceSuccessfully(srv);
+        },
+      });
+  }
+
+  cleanLog() {
+    this.logs = [];
+  }
+
+  fileDownload(file: File): void {
+    this.service.download(`/srv/file/${file.name}`, file.name);
   }
 }

@@ -1,11 +1,3 @@
-.container {
-  display: flex;
-}
-.content {
-  box-sizing: border-box;
-  width: calc(100% - 300px);
-  padding: 0 15px;
-}
 .log {
   box-sizing: border-box;
   width: 300px;
@@ -17,28 +9,17 @@
   height: 5px;
 }
 .title {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   font-size: large;
   font-weight: bold;
-  padding: 10px 0;
-}
-.jobs {
-  display: flex;
-}
-.job {
-  padding: 15px;
-  width: 25%;
-}
-.job:first-child {
-  padding-left: 0;
-}
-.job:last-child {
-  padding-right: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 .job-log {
   font-size: small;
   margin-top: 10px;
 }
-.table {
+.btn-service {
   width: 100%;
+  margin-bottom: 15px;
 }

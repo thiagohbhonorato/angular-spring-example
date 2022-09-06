@@ -22,3 +22,86 @@ body {
   font-family: monospace;
   white-space: pre;
 }
+.table {
+  width: 100%;
+  max-width: 100%;
+}
+.table th,
+.table td {
+  white-space: normal;
+}
+.text-center {
+  text-align: center;
+}
+.container {
+  box-sizing: border-box;
+  padding: 0 15px;
+}
+.row {
+  box-sizing: border-box;
+  margin: 0 -15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.col {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  padding: 0 15px;
+}
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9,
+.col-10,
+.col-11,
+.col-12 {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  padding: 0 15px;
+}
+.col-1 {
+  width: 8.3333%;
+}
+.col-2 {
+  width: 16.6666%;
+}
+.col-3 {
+  width: 25%;
+}
+.col-4 {
+  width: 33.333%;
+}
+.col-5 {
+  width: 41.6666%;
+}
+.col-6 {
+  width: 50%;
+}
+.col-7 {
+  width: 58.3333%;
+}
+.col-8 {
+  width: 66.6666%;
+}
+.col-9 {
+  width: 75%;
+}
+.col-10 {
+  width: 83.3333%;
+}
+.col-11 {
+  width: 91.6666%;
+}
+.col-12 {
+  width: 100%;
+}
+button ~ button {
+  margin-left: 5px !important;
+}
